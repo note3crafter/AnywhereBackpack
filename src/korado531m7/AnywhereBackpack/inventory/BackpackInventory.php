@@ -1,0 +1,31 @@
+<?php
+namespace korado531m7\AnywhereBackpack\inventory; 
+
+use pocketmine\math\Vector3;
+use pocketmine\inventory\CustomInventory;
+
+class BackpackInventory extends CustomInventory{
+    /** @var int */
+    protected $network_type;
+    protected $title;
+    protected $size;
+
+    public function __construct(int $network_type, Vector3 $holder, int $size = null, string $title = 'Backpack'){
+        $this->network_type = $network_type;
+        $this->title = $title;
+        $this->size = $size;
+        parent::__construct($holder, [], $size, $title);
+    }
+
+    public function getNetworkType() : int{
+        return $this->network_type;
+    }
+    
+    public function getName() : string{
+        return $this->title;
+    }
+    
+    public function getDefaultSize() : int{
+        return $this->size;
+    }
+}

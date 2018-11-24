@@ -1,0 +1,22 @@
+# AnywhereBackpack Configuration File
+
+# ----------------------------------------------------------------------------
+
+# Backpack Item Name
+
+backpack-item-name: '§aBackpack'
+
+# ----------------------------------------------------------------------------
+
+# Backpack Inventory Name
+# (Will be displayed on chest)
+
+backpack-inventory-name: '§7§k|| §r§aBACKPACK §7§k||'
+
+# ----------------------------------------------------------------------------
+
+# Allow to open backpack specific world
+# (If set to false, everyone can open backpack in all worlds)
+# (But if set to world name, everyone can only open in your typed world)
+
+allow-open-specific-world: false
