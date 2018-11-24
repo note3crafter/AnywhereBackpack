@@ -12,7 +12,10 @@ OOO
 O O
 OOO
 ```
-|Then create chest named 'Backpack'.
-|Tap somewhere with holding chest (backpack). Then large chest window will be displayed.
-|Throw items into chest, then close.
-|Reopen with chest and you can withdraw items
+Then create chest named 'Backpack'.
+
+Tap somewhere with holding chest (backpack). Then large chest window will be displayed.
+
+Deposit items with backpack, then close.
+
+Reopen chest. you can withdraw items
