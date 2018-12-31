@@ -73,8 +73,7 @@ class BackpackClass{
     }
     
     public function sendFakeChest(bool $isAir = false){
-        $id = BlockIds::CHEST;
-        if($isAir) $id = BlockIds::AIR;
+        $id = ($isAir ? BlockIds::AIR : BlockIds::CHEST);
         $this->sendFakeBlock($this->getPlayer(), $this->getX(), $this->getY(), $this->getZ(), $id);
         $this->sendFakeBlock($this->getPlayer(), $this->getX(), $this->getY(), $this->getZ() + 1, $id);
     }

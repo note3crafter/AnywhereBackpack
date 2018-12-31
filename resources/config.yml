@@ -8,6 +8,19 @@ backpack-item-name: '§aBackpack'
 
 # ----------------------------------------------------------------------------
 
+# Allow to open backpack with command (/backpack)
+# (if set to true, everyone can open backpack with /backpack command)
+
+allow-open-with-command: false
+
+# ----------------------------------------------------------------------------
+
+# Will send this message when player tried to open with command although command is disabled
+
+message-open-command-rejected: Can't open backpack. please make backpack item and open it.
+
+# ----------------------------------------------------------------------------
+
 # Backpack Inventory Name
 # (Will be displayed on chest)
 

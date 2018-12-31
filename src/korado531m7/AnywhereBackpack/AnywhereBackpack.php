@@ -7,6 +7,9 @@ use pocketmine\utils\Config;
 use pocketmine\item\ItemIds;
 use pocketmine\item\Item;
 use pocketmine\inventory\ShapedRecipe;
+use pocketmine\command\CommandSender;
+use pocketmine\command\CommandExecutor;
+use pocketmine\command\Command;
 use korado531m7\AnywhereBackpack\task\DelayAddWindowTask;
 
 class AnywhereBackpack extends PluginBase{
@@ -16,7 +19,7 @@ class AnywhereBackpack extends PluginBase{
     private static $backpack = [];
     
     public function onEnable(){
-        self::setBase($this);
+        self::$pBase = $this;
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         @mkdir($this->getDataFolder(), 0744, true);
         $this->saveResource('config.yml', false);
@@ -27,13 +30,24 @@ class AnywhereBackpack extends PluginBase{
         Item::addCreativeItem($this->getBackpackItem());
     }
     
+    public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
+        if(strtolower($command->getName()) === 'backpack' && $sender instanceof Player){
+            if(self::$config->get('allow-open-with-command')){
+                self::sendBackpack($sender);
+            }else{
+                $sender->sendMessage(self::$config->get('message-open-command-rejected'));
+            }
+        }
+        return true;
+    }
+    
     public static function sendBackpack(Player $player){
         if(self::isAllowedSpecificWorld() && ($player->getLevel()->getName() !== self::isAllowedSpecificWorld(true))) return true;
         $inv = new BackpackClass($player, (int) $player->getX(), (int) $player->getY() + 4, (int) $player->getZ(), self::$config->get('backpack-inventory-name'));
         $inv->prepare();
         $inv->setContents(self::getBackpackItems($player));
         self::setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory()]);
-        self::getBase()->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
+        self::$pBase->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
     }
     
     public static function setBackpackItems(Player $player, array $items) : void{
@@ -59,8 +73,7 @@ class AnywhereBackpack extends PluginBase{
     
     public static function isAllowedSpecificWorld(bool $getName = false){
         $data = self::$config->get('allow-open-specific-world');
-        if($getName) return $data;
-        return (bool) $data;
+        return (bool) $getName ? $data : (bool) $data;
     }
     
     public static function resetInventoryStatus(Player $player) : void{
@@ -77,13 +90,5 @@ class AnywhereBackpack extends PluginBase{
     
     private static function setInventoryStatus(Player $player, array $data) : void{
         self::$invStatus[strtolower($player->getName())] = $data;
-    }
-    
-    private static function setBase(AnywhereBackpack $base){
-        self::$pBase = $base;
-    }
-    
-    private static function getBase() : AnywhereBackpack{
-        return self::$pBase;
     }
 }
