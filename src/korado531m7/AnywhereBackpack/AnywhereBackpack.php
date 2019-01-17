@@ -38,7 +38,11 @@ class AnywhereBackpack extends PluginBase{
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
         if(strtolower($label) === 'backpack' && $sender instanceof Player){
             if($this->config->get('allow-open-with-command')){
-                $this->sendBackpack($sender);
+                if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName()){
+                    $this->sendBackpack($sender);
+                }else{
+                    $sender->sendMessage('§cYou must have backpack to open with command');
+                }
             }else{
                 $sender->sendMessage($this->config->get('message-open-command-rejected'));
             }
