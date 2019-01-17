@@ -33,3 +33,11 @@ backpack-inventory-name: '§7§k|| §r§aBACKPACK §7§k||'
 # (But if set to world name, everyone can only open in your typed world)
 
 allow-open-specific-world: false
+
+# ----------------------------------------------------------------------------
+
+# Clear all backpack every server start
+# (If set to false, all of backpacks are saved on database)
+
+reset-every-server-start: false
+

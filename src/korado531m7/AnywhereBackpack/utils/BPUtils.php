@@ -11,8 +11,6 @@ use pocketmine\network\mcpe\protocol\BlockEntityDataPacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 
 class BPUtils{
-    private static $backpackCount = 1;
-    
     public static function sendFakeBlock(Player $player,int $x,int $y,int $z,int $blockid){
         $pk = new UpdateBlockPacket();
         $pk->x = $x;
@@ -39,14 +37,12 @@ class BPUtils{
         self::sendFakeBlock($player, $x, $y, $z + 1, $id);
     }
     
-    //TODO
-    public static function getIdFromItem(Item $item) : int{
+    public static function getIdFromItem(Item $item) : ?int{
         $lore = $item->getLore();
-        return substr($lore[2], 3);
+        return ($lore[2] ?? null) === null ? null : substr($lore[2], 3);
     }
     
-    public static function setIdToItem(Item $item) : Item{
-        $item = $item->setLore(['','§aBackpack ID','§e'.self::$backpackCount]);
-        self::$backpackCount++;
+    public static function setIdToItem(Item $item, int $id) : Item{
+        return $item->setLore(['','§aBackpack ID','§e'.$id]);
     }
 }

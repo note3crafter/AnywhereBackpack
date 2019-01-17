@@ -20,6 +20,7 @@ class BackpackInventory extends ContainerInventory{
         $this->player = $player;
         $this->pos = $pos = $player->floor()->add(0, 3);
         parent::__construct($pos, [], $this->size, $title);
+        $this->prepare();
     }
     
     public function getInventory() : BackpackInventory{

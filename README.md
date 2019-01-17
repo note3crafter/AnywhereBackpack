@@ -7,6 +7,7 @@ Download converted to phar file [here](https://poggit.pmmp.io/ci/korado531m7/Any
 
 ### Feature
 Anywhere you can save items to backpack. Also you can withdraw items :D
+Each of backpack have their own ID that mean you can share with another people!
 
 
 ### How to use

@@ -2,6 +2,7 @@
 namespace korado531m7\AnywhereBackpack;
 
 use korado531m7\AnywhereBackpack\inventory\BackpackInventory;
+use korado531m7\AnywhereBackpack\provider\SQLite3Provider;
 use korado531m7\AnywhereBackpack\task\DelayAddWindowTask;
 use korado531m7\AnywhereBackpack\utils\BPUtils;
 
@@ -16,17 +17,22 @@ use pocketmine\utils\Config;
 
 class AnywhereBackpack extends PluginBase{
     private $invStatus = [];
-    private $backpack = [];
     
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         @mkdir($this->getDataFolder(), 0744, true);
+        $this->db = new SQLite3Provider($this);
         $this->saveResource('config.yml', false);
         $this->config = new Config($this->getDataFolder().'config.yml', Config::YAML);
         $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER,0,1)], [$this->getBackpackItem()]);
         $this->getServer()->getCraftingManager()->registerShapedRecipe($recipe);
         $this->getServer()->getCraftingManager()->buildCraftingDataCache();
-        Item::addCreativeItem($this->getBackpackItem());
+    }
+    
+    public function onDisable(){
+        if($this->config->get('reset-every-server-start')){
+            $this->db->formatDatabase();
+        }
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
@@ -42,24 +48,19 @@ class AnywhereBackpack extends PluginBase{
     
     public function sendBackpack(Player $player){
         if($this->isAllowedSpecificWorld() && ($player->getLevel()->getName() !== $this->isAllowedSpecificWorld(true))) return true;
-        $inv = new BackpackInventory($player, $this->config->get('backpack-inventory-name'));
-        $inv->prepare();
-        $inv->setContents($this->getBackpackItems($player));
-        $this->setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory()]);
-        $this->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
+        $id = BPUtils::getIdFromItem($player->getInventory()->getItemInHand());
+        if($id === null){
+            $player->sendMessage('§cThis backpack is broken. Create new one.');
+        }else{
+            $inv = new BackpackInventory($player, $this->config->get('backpack-inventory-name').'§r §7(No.'.$id.')');
+            $inv->setContents($this->db->restoreBackpack($id));
+            $this->setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory(), $id]);
+            $this->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
+        }
     }
     
-    public function setBackpackItems(Player $player, array $items) : void{
-        $this->backpack[strtolower($player->getName())] = $items;
-    }
-    
-    public function formatBackpack(Player $player) : void{
-        $name = strtolower($player->getName());
-        if(($this->backpack[$name] ?? null) === null) $this->backpack[$name] = [];
-    }
-    
-    public function getBackpackItems(Player $player) : array{
-        return $this->backpack[strtolower($player->getName())] ?? [];
+    public function setBackpackItems(int $id, array $items) : void{
+        $this->db->saveBackpack($id, $items);
     }
     
     public function getInventoryStatus(Player $player) : array{
@@ -87,7 +88,11 @@ class AnywhereBackpack extends PluginBase{
         return $this->config->get('backpack-item-name');
     }
     
-    private function getBackpackItem() : Item{
+    public function getBackpackItem() : Item{
         return Item::get(54, 0, 1)->setCustomName($this->getItemName());
+    }
+    
+    public function getSavedBackpackItem() : Item{
+        return BPUtils::setIdToItem($this->getBackpackItem(), $this->db->getNextId());
     }
 }
