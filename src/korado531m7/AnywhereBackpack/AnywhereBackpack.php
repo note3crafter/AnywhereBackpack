@@ -1,94 +1,93 @@
 <?php
 namespace korado531m7\AnywhereBackpack;
 
+use korado531m7\AnywhereBackpack\inventory\BackpackInventory;
+use korado531m7\AnywhereBackpack\task\DelayAddWindowTask;
+use korado531m7\AnywhereBackpack\utils\BPUtils;
+
 use pocketmine\Player;
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
+use pocketmine\inventory\ShapedRecipe;
+use pocketmine\item\Item;
+use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use pocketmine\item\ItemIds;
-use pocketmine\item\Item;
-use pocketmine\inventory\ShapedRecipe;
-use pocketmine\command\CommandSender;
-use pocketmine\command\CommandExecutor;
-use pocketmine\command\Command;
-use korado531m7\AnywhereBackpack\task\DelayAddWindowTask;
 
 class AnywhereBackpack extends PluginBase{
-    private static $pBase;
-    private static $config;
-    private static $invStatus = [];
-    private static $backpack = [];
+    private $invStatus = [];
+    private $backpack = [];
     
     public function onEnable(){
-        self::$pBase = $this;
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         @mkdir($this->getDataFolder(), 0744, true);
         $this->saveResource('config.yml', false);
-        self::$config = new Config($this->getDataFolder().'config.yml', Config::YAML);
-        $recipe = new ShapedRecipe(["AAA","A A","AAA"], ["A" => Item::get(ItemIds::LEATHER,0,1) ], [$this->getBackpackItem()]);
+        $this->config = new Config($this->getDataFolder().'config.yml', Config::YAML);
+        $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER,0,1)], [$this->getBackpackItem()]);
         $this->getServer()->getCraftingManager()->registerShapedRecipe($recipe);
         $this->getServer()->getCraftingManager()->buildCraftingDataCache();
         Item::addCreativeItem($this->getBackpackItem());
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
-        if(strtolower($command->getName()) === 'backpack' && $sender instanceof Player){
-            if(self::$config->get('allow-open-with-command')){
-                self::sendBackpack($sender);
+        if(strtolower($label) === 'backpack' && $sender instanceof Player){
+            if($this->config->get('allow-open-with-command')){
+                $this->sendBackpack($sender);
             }else{
-                $sender->sendMessage(self::$config->get('message-open-command-rejected'));
+                $sender->sendMessage($this->config->get('message-open-command-rejected'));
             }
         }
         return true;
     }
     
-    public static function sendBackpack(Player $player){
-        if(self::isAllowedSpecificWorld() && ($player->getLevel()->getName() !== self::isAllowedSpecificWorld(true))) return true;
-        $inv = new BackpackClass($player, (int) $player->getX(), (int) $player->getY() + 4, (int) $player->getZ(), self::$config->get('backpack-inventory-name'));
+    public function sendBackpack(Player $player){
+        if($this->isAllowedSpecificWorld() && ($player->getLevel()->getName() !== $this->isAllowedSpecificWorld(true))) return true;
+        $inv = new BackpackInventory($player, $this->config->get('backpack-inventory-name'));
         $inv->prepare();
-        $inv->setContents(self::getBackpackItems($player));
-        self::setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory()]);
-        self::$pBase->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
+        $inv->setContents($this->getBackpackItems($player));
+        $this->setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory()]);
+        $this->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
     }
     
-    public static function setBackpackItems(Player $player, array $items) : void{
-        self::$backpack[strtolower($player->getName())] = $items;
+    public function setBackpackItems(Player $player, array $items) : void{
+        $this->backpack[strtolower($player->getName())] = $items;
     }
     
-    public static function formatBackpack(Player $player) : void{
+    public function formatBackpack(Player $player) : void{
         $name = strtolower($player->getName());
-        if((self::$backpack[$name] ?? null) === null) self::$backpack[$name] = [];
+        if(($this->backpack[$name] ?? null) === null) $this->backpack[$name] = [];
     }
     
-    public static function getBackpackItems(Player $player) : array{
-        return self::$backpack[strtolower($player->getName())] ?? [];
+    public function getBackpackItems(Player $player) : array{
+        return $this->backpack[strtolower($player->getName())] ?? [];
     }
     
-    public static function getInventoryStatus(Player $player) : array{
-        return self::$invStatus[strtolower($player->getName())] ?? [];
+    public function getInventoryStatus(Player $player) : array{
+        return $this->invStatus[strtolower($player->getName())] ?? [];
     }
     
-    public static function isOpeningBackpack(Player $player) : bool{
-        return count(self::getInventoryStatus($player)) !== 0;
+    public function isOpeningBackpack(Player $player) : bool{
+        return count($this->getInventoryStatus($player)) !== 0;
     }
     
-    public static function isAllowedSpecificWorld(bool $getName = false){
-        $data = self::$config->get('allow-open-specific-world');
-        return (bool) $getName ? $data : (bool) $data;
+    private function setInventoryStatus(Player $player, array $data) : void{
+        $this->invStatus[strtolower($player->getName())] = $data;
     }
     
-    public static function resetInventoryStatus(Player $player) : void{
-        self::$invStatus[strtolower($player->getName())] = [];
+    public function isAllowedSpecificWorld(bool $getName = false){
+        $data = $this->config->get('allow-open-specific-world');
+        return $getName ? $data : (bool) $data;
     }
     
-    public static function getItemName() : string{
-        return self::$config->get('backpack-item-name');
+    public function resetInventoryStatus(Player $player) : void{
+        $this->invStatus[strtolower($player->getName())] = [];
+    }
+    
+    public function getItemName() : string{
+        return $this->config->get('backpack-item-name');
     }
     
     private function getBackpackItem() : Item{
-        return Item::get(54, 0, 1)->setCustomName(self::getItemName());
-    }
-    
-    private static function setInventoryStatus(Player $player, array $data) : void{
-        self::$invStatus[strtolower($player->getName())] = $data;
+        return Item::get(54, 0, 1)->setCustomName($this->getItemName());
     }
 }

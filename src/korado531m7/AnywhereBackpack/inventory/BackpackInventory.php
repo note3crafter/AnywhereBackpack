@@ -1,20 +1,45 @@
 <?php
 namespace korado531m7\AnywhereBackpack\inventory; 
 
-use pocketmine\math\Vector3;
-use pocketmine\inventory\CustomInventory;
+use korado531m7\AnywhereBackpack\AnywhereBackpack;
+use korado531m7\AnywhereBackpack\utils\BPUtils;
 
-class BackpackInventory extends CustomInventory{
-    /** @var int */
-    protected $network_type;
+use pocketmine\Player;
+use pocketmine\inventory\ContainerInventory;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
+
+class BackpackInventory extends ContainerInventory{
+    protected $network_type = WindowTypes::CONTAINER;
     protected $title;
-    protected $size;
-
-    public function __construct(int $network_type, Vector3 $holder, int $size = null, string $title = 'Backpack'){
-        $this->network_type = $network_type;
+    protected $size = 54;
+    private $pos;
+    
+    public function __construct(Player $player, string $title){
         $this->title = $title;
-        $this->size = $size;
-        parent::__construct($holder, [], $size, $title);
+        $this->player = $player;
+        $this->pos = $pos = $player->floor()->add(0, 3);
+        parent::__construct($pos, [], $this->size, $title);
+    }
+    
+    public function getInventory() : BackpackInventory{
+        return $this;
+    }
+    
+    public function getPlayer() : Player{
+        return $this->player;
+    }
+    
+    public function getX() : int{
+        return $this->pos->x;
+    }
+    
+    public function getY() : int{
+        return $this->pos->y;
+    }
+    
+    public function getZ() : int{
+        return $this->pos->z;
     }
 
     public function getNetworkType() : int{
@@ -27,5 +52,24 @@ class BackpackInventory extends CustomInventory{
     
     public function getDefaultSize() : int{
         return $this->size;
+    }
+    
+    public function setName() : void{
+        $tag = new CompoundTag();
+        $tag->setString('CustomName', $this->title);
+        BPUtils::sendTagData($this->getPlayer(), $tag, $this->getX(), $this->getY(), $this->getZ());
+    }
+    
+    public function setPair(){
+        $tag = new CompoundTag();
+        $tag->setInt('pairx', $this->getX());
+        $tag->setInt('pairz', $this->getZ());
+        BPUtils::sendTagData($this->getPlayer(), $tag, $this->getX(), $this->getY(), $this->getZ() + 1);
+    }
+    
+    public function prepare() : void{
+        BPUtils::sendFakeChest($this->getPlayer(), $this->getX(), $this->getY(), $this->getZ());
+        $this->setPair();
+        $this->setName();
     }
 }

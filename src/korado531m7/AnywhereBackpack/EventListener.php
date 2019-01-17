@@ -1,40 +1,39 @@
 <?php
 namespace korado531m7\AnywhereBackpack;
 
+use korado531m7\AnywhereBackpack\AnywhereBackpack;
+use korado531m7\AnywhereBackpack\utils\BPUtils;
+
+use pocketmine\Player;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
-use pocketmine\block\BlockIds;
-use pocketmine\Player;
-use korado531m7\AnywhereBackpack\inventory\BackpackInventory;
 
 class EventListener implements Listener{
-    public function __construct(){
+    private $instance;
+    
+    public function __construct(AnywhereBackpack $instance){
+        $this->instance = $instance;
     }
     
     public function onUseItem(PlayerInteractEvent $event){
         $item = $event->getItem();
-        if($item->getCustomName() === AnywhereBackpack::getItemName()){
+        if($item->getCustomName() === $this->instance->getItemName()){
             $event->setCancelled();
-            AnywhereBackpack::sendBackpack($event->getPlayer());
+            $this->instance->sendBackpack($event->getPlayer());
         }
-    }
-    
-    public function onJoin(PlayerPreLoginEvent $event){
-        AnywhereBackpack::formatBackpack($event->getPlayer());
     }
     
     public function onReceive(DataPacketReceiveEvent $event){
         $pk = $event->getPacket();
         $player = $event->getPlayer();
-        if($pk instanceof ContainerClosePacket && AnywhereBackpack::isOpeningBackpack($player)){
-            $status = AnywhereBackpack::getInventoryStatus($player);
-            $inv = new BackpackClass($player, $status[0], $status[1], $status[2]);
-            AnywhereBackpack::setBackpackItems($player, $status[3]->getContents());
-            $inv->sendFakeChest(true);
-            AnywhereBackpack::resetInventoryStatus($player);
+        if($pk instanceof ContainerClosePacket && $this->instance->isOpeningBackpack($player)){
+            $status = $this->instance->getInventoryStatus($player);
+            $this->instance->setBackpackItems($player, $status[3]->getContents());
+            BPUtils::sendFakeChest($player, $status[0], $status[1], $status[2], true);
+            $this->instance->resetInventoryStatus($player);
         }
     }
 }
