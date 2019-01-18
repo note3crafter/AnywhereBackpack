@@ -21,23 +21,33 @@ class AnywhereBackpack extends PluginBase{
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         @mkdir($this->getDataFolder(), 0744, true);
-        $this->db = new SQLite3Provider($this);
+        @mkdir($this->getDataFolder().'SaveData/', 0744, true);
         $this->saveResource('config.yml', false);
         $this->config = new Config($this->getDataFolder().'config.yml', Config::YAML);
+        switch($this->config->get('backpack-savetype')){
+            case 'SQLite3':
+                $this->db = new SQLite3Provider($this);
+            break;
+            
+            default:
+                $this->getLogger()->warning('Detected unsupported save type. use supported type.');
+                $this->getServer()->getPluginManager()->disablePlugin($this);
+            break;
+        }
         $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER,0,1)], [$this->getBackpackItem()]);
         $this->getServer()->getCraftingManager()->registerShapedRecipe($recipe);
         $this->getServer()->getCraftingManager()->buildCraftingDataCache();
     }
     
     public function onDisable(){
-        if($this->config->get('reset-every-server-start')){
+        if($this->config->get('reset-every-server-start') && isset($this->db)){
             $this->db->formatDatabase();
         }
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
         if(strtolower($label) === 'backpack' && $sender instanceof Player){
-            if($this->config->get('allow-open-with-command')){
+            if($this->config->get('allow-open-with-command')){ //TODO: open specific backpack with command
                 if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName()){
                     $this->sendBackpack($sender);
                 }else{

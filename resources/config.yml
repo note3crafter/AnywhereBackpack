@@ -41,3 +41,10 @@ allow-open-specific-world: false
 
 reset-every-server-start: false
 
+# ----------------------------------------------------------------------------
+
+# Save Type
+# Available: SQLite3
+
+backpack-savetype: SQLite3
+

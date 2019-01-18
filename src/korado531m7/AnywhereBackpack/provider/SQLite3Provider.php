@@ -14,11 +14,11 @@ class SQLite3Provider{
     }
     
     public function init(){
-        if(file_exists($this->plugin->getDataFolder().'SaveData.db')){
-            $this->db = new SQLite3($this->plugin->getDataFolder() .'SaveData.db');
+        if(file_exists($this->plugin->getDataFolder().'SaveData/data.db')){
+            $this->db = new SQLite3($this->plugin->getDataFolder().'SaveData/data.db');
         }else{
-            touch($this->plugin->getDataFolder().'SaveData.db');
-            $this->db = new SQLite3($this->plugin->getDataFolder() .'SaveData.db', \SQLITE3_OPEN_READWRITE | \SQLITE3_OPEN_CREATE);
+            touch($this->plugin->getDataFolder().'SaveData/data.db');
+            $this->db = new SQLite3($this->plugin->getDataFolder().'SaveData/data.db', \SQLITE3_OPEN_READWRITE | \SQLITE3_OPEN_CREATE);
             $this->db->exec('CREATE TABLE IF NOT EXISTS backpack(id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT)');
         }
     }
@@ -28,7 +28,7 @@ class SQLite3Provider{
         $this->db->query("INSERT OR REPLACE INTO backpack values($id, '$data')");
     }
     
-    public function restoreBackpack(int $id){
+    public function restoreBackpack(int $id) : array{
         $rawdata = $this->db->query("SELECT data FROM backpack WHERE id = $id")->fetchArray()[0];
         $result = unserialize(hex2bin($rawdata));
         return $result === false ? [] : $result;
