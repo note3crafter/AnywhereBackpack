@@ -43,6 +43,6 @@ class SQLite3Provider{
     }
     
     public function formatDatabase() : void{
-        @unlink($this->plugin->getDataFolder().'SaveData.db');
+        @unlink($this->plugin->getDataFolder().'SaveData/data.db');
     }
 }
