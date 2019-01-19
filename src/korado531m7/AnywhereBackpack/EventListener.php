@@ -4,7 +4,6 @@ namespace korado531m7\AnywhereBackpack;
 use korado531m7\AnywhereBackpack\AnywhereBackpack;
 use korado531m7\AnywhereBackpack\utils\BPUtils;
 
-use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;

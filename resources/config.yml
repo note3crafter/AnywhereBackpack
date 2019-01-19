@@ -46,6 +46,32 @@ allow-open-specific-world: false
 
 # ----------------------------------------------------------------------------
 
+# Will be sent if backpack chest is not compatible with this version
+# (Made in pervious version)
+
+not-compatible-backpack: §cThis backpack is broken. Create new one.
+
+# ----------------------------------------------------------------------------
+
+# Will be sent if player tried to open specific backpack with command but doesn't have permission
+
+open-specific-backpack-noperm: §cYou don't have permission to open specific backpack
+
+# ----------------------------------------------------------------------------
+
+# Will be sent if player tried to open with specific backpack but it doesn't registered yet
+# Replacement    %id: Tried to open id
+
+cannot-open-notregistered-backpack: §cBackpack ID %id is not registered yet
+
+# ----------------------------------------------------------------------------
+
+# Will be sent if player tried to open with command but doesn't have backpack in hand
+
+cannot-open-nobackpack: §cYou must have backpack to open with command
+
+# ----------------------------------------------------------------------------
+
 # Clear all backpack every server start
 # (If set to false, all of backpacks are saved on database)
 

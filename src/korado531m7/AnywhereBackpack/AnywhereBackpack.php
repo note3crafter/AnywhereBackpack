@@ -48,23 +48,22 @@ class AnywhereBackpack extends PluginBase{
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
         if(strtolower($label) === 'backpack' && $sender instanceof Player){
             if($this->config->get('allow-open-with-command')){
-                if($this->config->get('allow-open-specific-backpack') && isset($params[0]) && preg_match('/[0-9]/', $params[0])){
-                    if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){
-                        $id = (int) $params[0];
-                        if($this->db->getNextId() < $id){
-                            $sender->sendMessage('§cBackpack ID '.$id.' is not registered yet');
+                if($this->config->get('allow-open-specific-backpack') && isset($params[0]) && filter_var($params[0], FILTER_VALIDATE_INT) !== false){
+                    if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){;
+                        if($this->db->getNextId() < $params[0]){
+                            $sender->sendMessage(str_replace('%id', $params[0], $this->config->get('cannot-open-notregistered-backpack')));
                         }else{
-                            $this->sendBackpack($sender, $id);
+                            $this->sendBackpack($sender, $params[0]);
                         }
                     }else{
-                        $sender->sendMessage('§cYou don\'t have permission to open specific backpack');
+                        $sender->sendMessage($this->config->get('open-specific-backpack-noperm'));
                     }
                     return true;
                 }
                 if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName()){
                     $this->sendBackpack($sender);
                 }else{
-                    $sender->sendMessage('§cYou must have backpack to open with command');
+                    $sender->sendMessage($this->config->get('cannot-open-nobackpack'));
                 }
             }else{
                 $sender->sendMessage($this->config->get('message-open-command-rejected'));
@@ -77,7 +76,7 @@ class AnywhereBackpack extends PluginBase{
         if($this->isAllowedSpecificWorld() && ($player->getLevel()->getName() !== $this->isAllowedSpecificWorld(true))) return true;
         $id = $id === null ? BPUtils::getIdFromItem($player->getInventory()->getItemInHand()) : $id;
         if($id === null){
-            $player->sendMessage('§cThis backpack is broken. Create new one.');
+            $player->sendMessage($this->config->get('not-compatible-backpack'));
         }else{
             $inv = new BackpackInventory($player, $this->config->get('backpack-inventory-name').'§r §7(No.'.$id.')');
             $inv->setContents($this->db->restoreBackpack($id));
