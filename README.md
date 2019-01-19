@@ -13,6 +13,14 @@ Anywhere you can save items to backpack. Also you can withdraw items :D
 Each of backpack have their own ID that mean you can share with another people!
 
 
+### Command
+* Use `/backpack` to open backpack in hand
+* Use `/backpack ID` to open specific backpack with id
+(Permission: anywherebackpack.a2openspecificbackpack)
+
+You can configure command settings in config.yml
+
+
 ### How to use
 Open crafting table and place leather like
 ```

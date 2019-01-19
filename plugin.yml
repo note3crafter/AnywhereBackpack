@@ -1,9 +1,13 @@
 name: AnywhereBackpack
 api: 3.3.1
 main: korado531m7\AnywhereBackpack\AnywhereBackpack
-version: 1.2.2
+version: 1.3.0
 author: korado531m7
 description: You can save items to backpack
 commands:
  backpack:
   description: "Open your own backpack"
+permissions:
+ anywherebackpack.a2openspecificbackpack:
+  description: "Allow to open specific backpack"
+  default: op

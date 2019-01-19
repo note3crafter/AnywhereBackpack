@@ -47,7 +47,20 @@ class AnywhereBackpack extends PluginBase{
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
         if(strtolower($label) === 'backpack' && $sender instanceof Player){
-            if($this->config->get('allow-open-with-command')){ //TODO: open specific backpack with command
+            if($this->config->get('allow-open-with-command')){
+                if($this->config->get('allow-open-specific-backpack') && isset($params[0]) && preg_match('/[0-9]/', $params[0])){
+                    if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){
+                        $id = (int) $params[0];
+                        if($this->db->getNextId() < $id){
+                            $sender->sendMessage('§cBackpack ID '.$id.' is not registered yet');
+                        }else{
+                            $this->sendBackpack($sender, $id);
+                        }
+                    }else{
+                        $sender->sendMessage('§cYou don\'t have permission to open specific backpack');
+                    }
+                    return true;
+                }
                 if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName()){
                     $this->sendBackpack($sender);
                 }else{
@@ -60,9 +73,9 @@ class AnywhereBackpack extends PluginBase{
         return true;
     }
     
-    public function sendBackpack(Player $player){
+    public function sendBackpack(Player $player, ?int $id = null){
         if($this->isAllowedSpecificWorld() && ($player->getLevel()->getName() !== $this->isAllowedSpecificWorld(true))) return true;
-        $id = BPUtils::getIdFromItem($player->getInventory()->getItemInHand());
+        $id = $id === null ? BPUtils::getIdFromItem($player->getInventory()->getItemInHand()) : $id;
         if($id === null){
             $player->sendMessage('§cThis backpack is broken. Create new one.');
         }else{
@@ -99,7 +112,7 @@ class AnywhereBackpack extends PluginBase{
     }
     
     public function getItemName() : string{
-        return $this->config->get('backpack-item-name');
+        return '§aBackpack';
     }
     
     public function getBackpackItem() : Item{

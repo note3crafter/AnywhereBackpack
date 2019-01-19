@@ -2,16 +2,26 @@
 
 # ----------------------------------------------------------------------------
 
-# Backpack Item Name
-
-backpack-item-name: '§aBackpack'
-
-# ----------------------------------------------------------------------------
-
 # Allow to open backpack with command (/backpack)
 # (if set to true, everyone can open backpack with /backpack command)
 
 allow-open-with-command: false
+
+# ----------------------------------------------------------------------------
+
+# Allow to open specific backpack with id
+# - if set to false, players can open the backpack who have
+# - and if set to true, you can open by id with /backpack ID (e.g. /backpack 5)
+
+allow-open-specific-backpack: false
+
+# ----------------------------------------------------------------------------
+
+# Allow player to open specific who has permission
+# (If set to false, all players can open specific backpack with command)
+# (Permission: anywherebackpack.a2openspecificbackpack)
+
+open-specific-onlypermitted: true
 
 # ----------------------------------------------------------------------------
 
