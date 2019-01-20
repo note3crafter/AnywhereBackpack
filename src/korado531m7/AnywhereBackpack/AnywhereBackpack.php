@@ -113,13 +113,7 @@ class AnywhereBackpack extends PluginBase{
     }
     
     public function getBackpackItem(bool $activate = false) : Item{
-<<<<<<< HEAD
         return Item::get(ItemIds::CHEST, 0, 1)->setCustomName($this->getItemName($activate));
-=======
-        $item = Item::get(ItemIds::CHEST, 0, 1)->setCustomName($this->getItemName($activate));
-        if(!$activate) $item->setLore(['', $this->config->get('backpack-needtoactivate')]);
-        return $item;
->>>>>>> origin/master
     }
     
     public function getSavedBackpackItem() : Item{
