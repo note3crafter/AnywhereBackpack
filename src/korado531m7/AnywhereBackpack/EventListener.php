@@ -34,9 +34,9 @@ class EventListener implements Listener{
     public function onReceive(DataPacketReceiveEvent $event){
         $pk = $event->getPacket();
         $player = $event->getPlayer();
-        if($pk instanceof ContainerClosePacket && $this->instance->isOpeningBackpack($player)){
+        if($this->instance->isOpeningBackpack($player) && $pk instanceof ContainerClosePacket){
             $status = $this->instance->getInventoryStatus($player);
-            $this->instance->db->saveBackpack($status['id'], $status['inv']->getContents());
+            $this->instance->db->saveBackpack($status['id'], $status['inventory']->getContents());
             BPUtils::sendFakeChest($player, $status['x'], $status['y'], $status['z'], true);
             $this->instance->resetInventoryStatus($player);
         }

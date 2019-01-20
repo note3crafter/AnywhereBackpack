@@ -31,11 +31,11 @@ class AnywhereBackpack extends PluginBase{
             break;
             
             default:
-                $this->getLogger()->warning('Detected unsupported save type. use supported type.');
+                $this->getLogger()->warning('Save type '.$this->config->get('backpack-savetype').' is not available');
                 $this->getServer()->getPluginManager()->disablePlugin($this);
             break;
         }
-        $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER,0,1)], [$this->getBackpackItem()]);
+        $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER, -1, 1)], [$this->getBackpackItem()]);
         $this->getServer()->getCraftingManager()->registerShapedRecipe($recipe);
         $this->getServer()->getCraftingManager()->buildCraftingDataCache();
     }
@@ -113,8 +113,13 @@ class AnywhereBackpack extends PluginBase{
     }
     
     public function getBackpackItem(bool $activate = false) : Item{
+<<<<<<< HEAD
+        return Item::get(ItemIds::CHEST, 0, 1)->setCustomName($this->getItemName($activate));
+=======
         $item = Item::get(ItemIds::CHEST, 0, 1)->setCustomName($this->getItemName($activate));
         if(!$activate) $item->setLore(['', $this->config->get('backpack-needtoactivate')]);
+        return $item;
+>>>>>>> origin/master
     }
     
     public function getSavedBackpackItem() : Item{

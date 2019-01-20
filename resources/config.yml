@@ -28,12 +28,6 @@ cannot-open-nobackpack: §cYou must have backpack to open with command
 
 # ----------------------------------------------------------------------------
 
-# If backpack item is not activated, this message will set to lore
-
-backpack-needtoactivate: §7This is not activated. To activate, tap or click somewhere with holding this backpack
-
-# ----------------------------------------------------------------------------
-
 # Backpack Inventory Name
 # (Will be displayed on chest)
 
