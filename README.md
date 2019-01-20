@@ -28,9 +28,11 @@ OOO
 O O
 OOO
 ```
-Then create chest named 'Backpack'.
+Then create chest named 'Backpack'. But it is not activated.
+To activate, tap somewhere with holding it.
 
-Tap somewhere with holding chest (backpack) or type command /backpack, then large chest window will be displayed.
+Then, then large chest window will be displayed.
+(Also you can open with command /backpack)
 
 * To enable command, write `allow-open-with-command` to true
 

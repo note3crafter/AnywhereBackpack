@@ -5,12 +5,8 @@ use korado531m7\AnywhereBackpack\AnywhereBackpack;
 use korado531m7\AnywhereBackpack\utils\BPUtils;
 
 use pocketmine\event\Listener;
-use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\item\Item;
-use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 
 class EventListener implements Listener{
@@ -21,20 +17,17 @@ class EventListener implements Listener{
     }
     
     public function onUseItem(PlayerInteractEvent $event){
+        $player = $event->getPlayer();
         $item = $event->getItem();
-        if($item->getCustomName() === $this->instance->getItemName()){
-            $event->setCancelled();
-            $this->instance->sendBackpack($event->getPlayer());
-        }
-    }
-    
-    public function onCraft(CraftItemEvent $event){
-        $output = $event->getOutputs();
-        if(array_shift($output)->getCustomName() === $this->instance->getItemName()){
-            $inv = $event->getPlayer()->getInventory();
-            $event->setCancelled();
-            $inv->removeItem(Item::get(ItemIds::LEATHER,0,8));
-            $inv->addItem($this->instance->getSavedBackpackItem());
+        switch(true){
+            case $item->getCustomName() === $this->instance->getItemName():
+                $newItem = $this->instance->getSavedBackpackItem();
+                $this->instance->db->registerBackpack(BPUtils::getIdFromItem($newItem));
+                $player->getInventory()->setItemInHand($newItem);
+            case $item->getCustomName() === $this->instance->getItemName(true):
+                $this->instance->sendBackpack($player);
+                $event->setCancelled();
+            break;
         }
     }
     

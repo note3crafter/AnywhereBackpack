@@ -25,7 +25,12 @@ class SQLite3Provider{
     
     public function saveBackpack(int $id, array $items){
         $data = bin2hex(serialize($items));
-        $this->db->query("INSERT OR REPLACE INTO backpack values($id, '$data')");
+        $this->db->query("REPLACE INTO backpack values($id, '$data')");
+    }
+    
+    public function registerBackpack(int $id){
+        $data = bin2hex(serialize([]));
+        $this->db->query("INSERT INTO backpack values($id, '$data')");
     }
     
     public function restoreBackpack(int $id) : array{

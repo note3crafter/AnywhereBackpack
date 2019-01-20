@@ -17,6 +17,7 @@ use pocketmine\utils\Config;
 
 class AnywhereBackpack extends PluginBase{
     private $invStatus = [];
+    public $db;
     
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
@@ -60,7 +61,7 @@ class AnywhereBackpack extends PluginBase{
                     }
                     return true;
                 }
-                if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName()){
+                if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName(true)){
                     $this->sendBackpack($sender);
                 }else{
                     $sender->sendMessage($this->config->get('cannot-open-nobackpack'));
@@ -110,15 +111,17 @@ class AnywhereBackpack extends PluginBase{
         $this->invStatus[strtolower($player->getName())] = [];
     }
     
-    public function getItemName() : string{
-        return '§aBackpack';
+    public function getItemName(bool $activate = false) : string{
+        $color = $activate ? 'a' : '7';
+        return "§{$color}Backpack";
     }
     
-    public function getBackpackItem() : Item{
-        return Item::get(54, 0, 1)->setCustomName($this->getItemName());
+    public function getBackpackItem(bool $activate = false) : Item{
+        $item = Item::get(ItemIds::CHEST, 0, 1)->setCustomName($this->getItemName($activate));
+        if(!$activate) $item->setLore(['', $this->config->get('backpack-needtoactivate')]);
     }
     
     public function getSavedBackpackItem() : Item{
-        return BPUtils::setIdToItem($this->getBackpackItem(), $this->db->getNextId());
+        return BPUtils::setIdToItem($this->getBackpackItem(true), $this->db->getNextId());
     }
 }

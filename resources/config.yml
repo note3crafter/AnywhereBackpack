@@ -1,50 +1,6 @@
 # AnywhereBackpack Configuration File
 
-# ----------------------------------------------------------------------------
-
-# Allow to open backpack with command (/backpack)
-# (if set to true, everyone can open backpack with /backpack command)
-
-allow-open-with-command: false
-
-# ----------------------------------------------------------------------------
-
-# Allow to open specific backpack with id
-# - if set to false, players can open the backpack who have
-# - and if set to true, you can open by id with /backpack ID (e.g. /backpack 5)
-
-allow-open-specific-backpack: false
-
-# ----------------------------------------------------------------------------
-
-# Allow player to open specific who has permission
-# (If set to false, all players can open specific backpack with command)
-# (Permission: anywherebackpack.a2openspecificbackpack)
-
-open-specific-onlypermitted: true
-
-# ----------------------------------------------------------------------------
-
-# Will send this message when player tried to open with command although command is disabled
-
-message-open-command-rejected: Can't open backpack. please make backpack item and open it.
-
-# ----------------------------------------------------------------------------
-
-# Backpack Inventory Name
-# (Will be displayed on chest)
-
-backpack-inventory-name: '§7§k|| §r§aBACKPACK §7§k||'
-
-# ----------------------------------------------------------------------------
-
-# Allow to open backpack specific world
-# (If set to false, everyone can open backpack in all worlds)
-# (But if set to world name, everyone can only open in your typed world)
-
-allow-open-specific-world: false
-
-# ----------------------------------------------------------------------------
+# ------------------------------- Messages -----------------------------------
 
 # Will be sent if backpack chest is not compatible with this version
 # (Made in pervious version)
@@ -72,6 +28,70 @@ cannot-open-nobackpack: §cYou must have backpack to open with command
 
 # ----------------------------------------------------------------------------
 
+# If backpack item is not activated, this message will set to lore
+
+backpack-needtoactivate: §7This is not activated. To activate, tap or click somewhere with holding this backpack
+
+# ----------------------------------------------------------------------------
+
+# Backpack Inventory Name
+# (Will be displayed on chest)
+
+backpack-inventory-name: '§7§k|| §r§aBACKPACK §7§k||'
+
+# ----------------------------------------------------------------------------
+
+# Will send this message when player tried to open with command although command is disabled
+
+message-open-command-rejected: Can't open backpack. please make backpack item and open it.
+
+# ----------------------------------------------------------------------------
+
+
+
+
+
+
+# ------------------------------- Switch ------------------------------------
+
+# Allow to open backpack with command (/backpack)
+# (if set to true, everyone can open backpack with /backpack command)
+
+allow-open-with-command: false
+
+# ----------------------------------------------------------------------------
+
+# Allow to open specific backpack with id
+# - if set to false, players can open the backpack who have
+# - and if set to true, you can open by id with /backpack ID (e.g. /backpack 5)
+
+allow-open-specific-backpack: false
+
+# ----------------------------------------------------------------------------
+
+# Allow player to open specific who has permission
+# (If set to false, all players can open specific backpack with command)
+# (Permission: anywherebackpack.a2openspecificbackpack)
+
+open-specific-onlypermitted: true
+
+# ----------------------------------------------------------------------------
+
+# Allow to open backpack specific world
+# (If set to false, everyone can open backpack in all worlds)
+# (But if set to world name, everyone can only open in your typed world)
+
+allow-open-specific-world: false
+
+# ----------------------------------------------------------------------------
+
+
+
+
+
+
+# ------------------------------ Saving Data --------------------------------
+
 # Clear all backpack every server start
 # (If set to false, all of backpacks are saved on database)
 
@@ -84,3 +104,4 @@ reset-every-server-start: false
 
 backpack-savetype: SQLite3
 
+# ----------------------------------------------------------------------------
