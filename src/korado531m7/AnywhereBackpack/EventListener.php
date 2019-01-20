@@ -36,8 +36,8 @@ class EventListener implements Listener{
         $player = $event->getPlayer();
         if($pk instanceof ContainerClosePacket && $this->instance->isOpeningBackpack($player)){
             $status = $this->instance->getInventoryStatus($player);
-            $this->instance->setBackpackItems($status[4], $status[3]->getContents());
-            BPUtils::sendFakeChest($player, $status[0], $status[1], $status[2], true);
+            $this->instance->db->saveBackpack($status['id'], $status['inv']->getContents());
+            BPUtils::sendFakeChest($player, $status['x'], $status['y'], $status['z'], true);
             $this->instance->resetInventoryStatus($player);
         }
     }

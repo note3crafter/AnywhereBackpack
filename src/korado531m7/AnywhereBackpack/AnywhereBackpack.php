@@ -81,13 +81,9 @@ class AnywhereBackpack extends PluginBase{
         }else{
             $inv = new BackpackInventory($player, $this->config->get('backpack-inventory-name').'§r §7(No.'.$id.')');
             $inv->setContents($this->db->restoreBackpack($id));
-            $this->setInventoryStatus($player, [$inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory(), $id]);
+            $this->setInventoryStatus($player, $inv->getX(), $inv->getY(), $inv->getZ(), $inv->getInventory(), $id);
             $this->getScheduler()->scheduleDelayedTask(new DelayAddWindowTask($player, $inv->getInventory()), 10);
         }
-    }
-    
-    public function setBackpackItems(int $id, array $items) : void{
-        $this->db->saveBackpack($id, $items);
     }
     
     public function getInventoryStatus(Player $player) : array{
@@ -98,8 +94,8 @@ class AnywhereBackpack extends PluginBase{
         return count($this->getInventoryStatus($player)) !== 0;
     }
     
-    private function setInventoryStatus(Player $player, array $data) : void{
-        $this->invStatus[strtolower($player->getName())] = $data;
+    private function setInventoryStatus(Player $player, int $x, int $y, int $z, BackpackInventory $inv, int $id) : void{
+        $this->invStatus[strtolower($player->getName())] = ['x' => $x, 'y' => $y, 'z' => $z, 'inventory' => $inv, 'id' => $id];
     }
     
     public function isAllowedSpecificWorld(bool $getName = false){
