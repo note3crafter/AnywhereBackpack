@@ -25,6 +25,12 @@ class AnywhereBackpack extends PluginBase{
         @mkdir($this->getDataFolder().'SaveData/', 0744, true);
         $this->saveResource('config.yml', false);
         $this->config = new Config($this->getDataFolder().'config.yml', Config::YAML);
+        if($this->config->get('config-version') === $this->getDescription()->getVersion()){
+            $this->getLogger()->info('Configuration file has been loaded');
+        }else{
+            $this->getLogger()->notice('Configuration file is not up to date. please delete and restart again.');
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+        }
         switch($this->config->get('backpack-savetype')){
             case 'SQLite3':
                 $this->db = new SQLite3Provider($this);
