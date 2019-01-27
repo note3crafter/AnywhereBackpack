@@ -46,7 +46,14 @@ message-open-command-rejected: Can't open backpack. please make backpack item an
 
 
 
-# ------------------------------- Switch ------------------------------------
+# ------------------------------- Switch -------------------------------------
+
+# Allow player to manage all backpacks who has permission
+# Type '/backpack manage' to manage
+
+management-backpack-switch: true
+
+# ----------------------------------------------------------------------------
 
 # Allow to open backpack with command (/backpack)
 # (if set to true, everyone can open backpack with /backpack command)
@@ -86,7 +93,7 @@ allow-open-specific-world: false
 
 # ------------------------------ Saving Data --------------------------------
 
-# Clear all backpack every server start
+# Clear all backpack every server start  (NOT RECOMMEND)
 # (If set to false, all of backpacks are saved on database)
 
 reset-every-server-start: false
@@ -94,7 +101,7 @@ reset-every-server-start: false
 # ----------------------------------------------------------------------------
 
 # Save Type
-# Available: SQLite3
+# Available: SQLite3, MySQL
 
 backpack-savetype: SQLite3
 
@@ -104,5 +111,32 @@ backpack-savetype: SQLite3
 
 
 
+
+# ----------------------- Database Settings (MYSQL) --------------------------
+
+# Enter database information
+# (You don't have to edit this if you choose 'SQLite3'.)
+
+#Database host
+database-host: example.com
+
+#Database Username
+database-username: DBUsername
+
+#Database Password
+database-password: examplePass
+
+#Database Name
+database-name: DBName
+
+#Database Port (Default: 3306)
+database-port: 3306
+
+# ----------------------------------------------------------------------------
+
+
+
+
+
 # ---------------------------- Don't Edit this -------------------------------
-config-version: 1.4.3
+config-version: 1.5.0

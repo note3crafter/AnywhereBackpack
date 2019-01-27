@@ -2,6 +2,7 @@
 namespace korado531m7\AnywhereBackpack;
 
 use korado531m7\AnywhereBackpack\inventory\BackpackInventory;
+use korado531m7\AnywhereBackpack\provider\MySQLProvider;
 use korado531m7\AnywhereBackpack\provider\SQLite3Provider;
 use korado531m7\AnywhereBackpack\task\DelayAddWindowTask;
 use korado531m7\AnywhereBackpack\utils\BPUtils;
@@ -34,6 +35,10 @@ class AnywhereBackpack extends PluginBase{
         switch($this->config->get('backpack-savetype')){
             case 'SQLite3':
                 $this->db = new SQLite3Provider($this);
+            break;
+            
+            case 'MySQL':
+                $this->db = new MySQLProvider($this);
             break;
             
             default:
