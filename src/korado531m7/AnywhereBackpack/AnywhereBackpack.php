@@ -62,7 +62,7 @@ class AnywhereBackpack extends PluginBase{
             $allow = false;
             if($this->config->get('allow-open-with-command')){
                 if($this->config->get('allow-open-specific-backpack') && filter_var($params[0] ?? null, FILTER_VALIDATE_INT) !== false){
-                    if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){;
+                    if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){
                         if($this->db->getNextId() < $params[0]){
                             $sender->sendMessage(str_replace('%id', $params[0], $this->config->get('cannot-open-notregistered-backpack')));
                         }else{

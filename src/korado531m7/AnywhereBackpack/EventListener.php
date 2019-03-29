@@ -61,6 +61,5 @@ class EventListener implements Listener{
         $this->instance->db->saveBackpack($status['id'], $status['inventory']->getContents());
         BPUtils::sendFakeChest($player, $status['x'], $status['y'], $status['z'], true);
         $this->instance->resetInventoryStatus($player);
-        $player->
     }
 }
