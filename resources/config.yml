@@ -139,4 +139,4 @@ database-port: 3306
 
 
 # ---------------------------- Don't Edit this -------------------------------
-config-version: 1.5.0
+config-version: 1.5.1

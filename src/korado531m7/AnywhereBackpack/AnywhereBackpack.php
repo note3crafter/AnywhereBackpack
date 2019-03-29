@@ -46,7 +46,7 @@ class AnywhereBackpack extends PluginBase{
                 $this->getServer()->getPluginManager()->disablePlugin($this);
             break;
         }
-        $recipe = new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER, -1, 1)], [$this->getBackpackItem()]);
+        $recipe = $this->getRecipe();
         $this->getServer()->getCraftingManager()->registerShapedRecipe($recipe);
         $this->getServer()->getCraftingManager()->buildCraftingDataCache();
     }
@@ -59,20 +59,21 @@ class AnywhereBackpack extends PluginBase{
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
         if(strtolower($label) === 'backpack' && $sender instanceof Player){
+            $allow = false;
             if($this->config->get('allow-open-with-command')){
-                if($this->config->get('allow-open-specific-backpack') && isset($params[0]) && filter_var($params[0], FILTER_VALIDATE_INT) !== false){
+                if($this->config->get('allow-open-specific-backpack') && filter_var($params[0] ?? null, FILTER_VALIDATE_INT) !== false){
                     if(!$this->config->get('open-specific-onlypermitted') || ($this->config->get('open-specific-onlypermitted') && $sender->hasPermission('anywherebackpack.a2openspecificbackpack'))){;
                         if($this->db->getNextId() < $params[0]){
                             $sender->sendMessage(str_replace('%id', $params[0], $this->config->get('cannot-open-notregistered-backpack')));
                         }else{
                             $this->sendBackpack($sender, $params[0]);
                         }
+                        $allow = true;
                     }else{
                         $sender->sendMessage($this->config->get('open-specific-backpack-noperm'));
                     }
-                    return true;
                 }
-                if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName(true)){
+                if($sender->getInventory()->getItemInHand()->getCustomName() === $this->getItemName(true) || $allow){
                     $this->sendBackpack($sender);
                 }else{
                     $sender->sendMessage($this->config->get('cannot-open-nobackpack'));
@@ -129,5 +130,9 @@ class AnywhereBackpack extends PluginBase{
     
     public function getSavedBackpackItem() : Item{
         return BPUtils::setIdToItem($this->getBackpackItem(true), $this->db->getNextId());
+    }
+    
+    public function getRecipe(){
+        return new ShapedRecipe(['AAA','A A','AAA'], ['A' => Item::get(ItemIds::LEATHER, -1, 1)], [$this->getBackpackItem()]);
     }
 }

@@ -4,7 +4,10 @@ namespace korado531m7\AnywhereBackpack;
 use korado531m7\AnywhereBackpack\AnywhereBackpack;
 use korado531m7\AnywhereBackpack\utils\BPUtils;
 
+use pocketmine\Player;
 use pocketmine\event\Listener;
+use pocketmine\event\inventory\CraftItemEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
@@ -14,6 +17,20 @@ class EventListener implements Listener{
     
     public function __construct(AnywhereBackpack $instance){
         $this->instance = $instance;
+    }
+    
+    public function onQuit(PlayerQuitEvent $event){
+        $player = $event->getPlayer();
+        if($this->instance->isOpeningBackpack($player)){
+            $this->closeBackpack($player);
+        }
+    }
+    
+    public function onCraft(CraftItemEvent $event){
+        $player = $event->getPlayer();
+        if(!$player->hasPermission('anywherebackpack.craftingitem') && $event->getRecipe() == $this->instance->getRecipe()){
+            $event->setCancelled();
+        }
     }
     
     public function onUseItem(PlayerInteractEvent $event){
@@ -35,10 +52,15 @@ class EventListener implements Listener{
         $pk = $event->getPacket();
         $player = $event->getPlayer();
         if($this->instance->isOpeningBackpack($player) && $pk instanceof ContainerClosePacket){
-            $status = $this->instance->getInventoryStatus($player);
-            $this->instance->db->saveBackpack($status['id'], $status['inventory']->getContents());
-            BPUtils::sendFakeChest($player, $status['x'], $status['y'], $status['z'], true);
-            $this->instance->resetInventoryStatus($player);
+            $this->closeBackpack($player);
         }
+    }
+    
+    private function closeBackpack(Player $player){
+        $status = $this->instance->getInventoryStatus($player);
+        $this->instance->db->saveBackpack($status['id'], $status['inventory']->getContents());
+        BPUtils::sendFakeChest($player, $status['x'], $status['y'], $status['z'], true);
+        $this->instance->resetInventoryStatus($player);
+        $player->
     }
 }
