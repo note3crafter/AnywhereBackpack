@@ -7,7 +7,7 @@ use pocketmine\block\BlockIds;
 use pocketmine\item\Item;
 use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\BlockEntityDataPacket;
+use pocketmine\network\mcpe\protocol\BlockActorDataPacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 
 class BPUtils{
@@ -23,7 +23,7 @@ class BPUtils{
     
     public static function sendTagData(Player $player, CompoundTag $tag, int $x, int $y, int $z){
         $writer = new NetworkLittleEndianNBTStream();
-        $pk = new BlockEntityDataPacket;
+        $pk = new BlockActorDataPacket;
         $pk->x = $x;
         $pk->y = $y;
         $pk->z = $z;
